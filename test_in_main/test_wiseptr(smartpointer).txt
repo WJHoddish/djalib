@@ -1,0 +1,17 @@
+wiseptr<int> p1(new int(0));
+
+	BLANK;
+
+	p1 = p1;
+
+	BLANK;
+
+	wiseptr<int> p2(p1);
+
+	BLANK;
+
+	wiseptr<int> p3(new int(1));
+
+	BLANK;
+
+	p3 = p1;

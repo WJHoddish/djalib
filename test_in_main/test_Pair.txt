@@ -1,0 +1,11 @@
+djalib::Pair<int, int> a;
+	std::cout
+		<< a._first << ", "
+		<< a._second << "\n";
+
+	BLANK;
+
+	djalib::Pair<int, Test_a> b = djalib::make_pair(200, Test_a(10));
+	std::cout
+		<< b._first << ", "
+		<< b._second << "\n";

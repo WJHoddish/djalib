@@ -1,0 +1,17 @@
+Complexnum c1;
+	std::cout << c1 << "\n";
+
+	Complexnum c2(1, 1);
+	std::cout << c2 << "\n";
+
+	Complexnum c3(2.5, 2);
+	std::cout << c3 << "\n";
+
+	c1 = c2 + c3;
+	std::cout << c1 << "\n";
+	c1 = c2 - c3;
+	std::cout << c1 << "\n";
+	c1 = c2 * c2;
+	std::cout << c1 << "\n";
+	c1 = (c2 - c3) / c3;
+	std::cout << c1 << "\n";

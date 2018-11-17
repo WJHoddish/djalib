@@ -1,0 +1,19 @@
+std::vector<int> arr = { 1, 3, 4, 5, 6, 9, 10 };
+
+	djalib::Counter counter;
+
+	djalib::For_Each(arr.begin(), arr.end(), counter);
+
+	BLANK;
+
+	counter.getCounter().display();
+
+	BLANK;
+
+	djalib::Averager averager;
+	djalib::For_Each(arr.begin(), arr.end(), averager);
+
+	BLANK;
+
+	std::cout << "avg: " << averager.getAverage() << "\n";
+	std::cout << "avg2: " << djalib::Average(arr) << "\n";
