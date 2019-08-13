@@ -1,3 +1,0 @@
-Test_c_base* c1 = REFLECTION_CREATOR(Test_c_base, "Test_c");
-	c1->test();
-	delete c1;
