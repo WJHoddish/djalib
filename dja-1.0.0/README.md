@@ -1,10 +1,10 @@
 # Djalib: A C++ library established during my learning process
 
 ## Purpose
-The main purpose of using this library is to introduce an IoC framework (cpp implementation) into your project.
-However, there are also plenty of typical cpp components include general data structures and tools for the specific use.
-Please be aware of that the folder: "frame" is the interface of this library, where includes the cmake file.
-As a default, the name used in the link_library is djalib.
+The main purpose of using this library is to introduce an IoC framework into your cpp project.
+There are also plenty of typical cpp components include data structures and tools for specific use.
+Please be aware of that the folder: "frame" is regarded as the entrance of this library, where includes the cmake file.
+As a default, the name used in the "target_link_libraries" is "djalib".
 
 ## Usage
 include_directories( ${path}/dja/include )
