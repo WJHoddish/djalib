@@ -10,6 +10,7 @@ As a default, the name used in the "target_link_libraries" is "djalib".
 include_directories( ${path}/dja/include )
 
 add_subdirectory( ${path}/dja/src )
+
 target_link_libraries( ${your_project_name} djalib )
 
 ## Components
