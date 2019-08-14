@@ -16,9 +16,8 @@ target_link_libraries( ${your_project_name} djalib )
 ## Components
 
 ## Features
-- use Google cpp style
+- Google cpp style
 - support Doxygen
-- support separation compilation
 
 ## FAQs
 If you meet any suspected bug, please contact me through <wjhgeneral@outlook.com>.
