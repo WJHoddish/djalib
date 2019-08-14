@@ -1,4 +1,4 @@
-# Djalib: Making a C++ library as a learning process
+# Djalib: Make a C++ library
 
 ## Purpose
 The main purpose of using this library is to introduce an IoC framework into your cpp project.
