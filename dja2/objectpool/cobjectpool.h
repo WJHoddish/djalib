@@ -146,14 +146,14 @@ public:	\
 		pool.freeChunk(this);	\
 	}	\
 private:
-#define COBJECTPOOL_STACKONLY(name)	\
+#define COBJECTPOOL_HEAPONLY(name)	\
 private:	\
 	~name() {}
 #define COBJECTPOOL_INCLASS(name)	\
 	COBJECTPOOL_VAR_DECLARE(name)	\
 	COBJECTPOOL_FUNC_CREATE(name)	\
 	COBJECTPOOL_FUNC_CLEAR(name)	\
-	COBJECTPOOL_STACKONLY(name)
+	COBJECTPOOL_HEAPONLY(name)
 
 #define COBJECTPOOL_VAR_INIT(name)	\
 	CObjectPool<name> name::pool;
