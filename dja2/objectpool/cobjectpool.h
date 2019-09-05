@@ -32,133 +32,132 @@
 #define DJA_COBJECTPOOL_H_
 
 namespace dja {
-	template <typename T, int chunk_size = 9>
-	class CObjectPool {
-	public:
-		/// \brief The constructor.
-		CObjectPool()
-			:
-			free_node_(nullptr),
-			head_block_(nullptr) {}
+template <typename T, int chunk_size = 9>
+class CObjectPool {
+ public:
+  /// \brief The constructor.
+  CObjectPool() : free_node_(nullptr), head_block_(nullptr) {}
 
-		/// \brief The destructor.
-		///
-		/// \attention Free all memory in the list.
-		~CObjectPool() {
-			ObjectBlock* cursor;
-			while (head_block_) {
-				cursor = head_block_->next_;
-				{ delete head_block_; head_block_ = cursor; }
-			}
-		}
+  /// \brief The destructor.
+  ///
+  /// \attention Free all memory in the list.
+  ~CObjectPool() {
+    ObjectBlock* cursor;
+    while (head_block_) {
+      cursor = head_block_->next_;
+      {
+        delete head_block_;
+        head_block_ = cursor;
+      }
+    }
+  }
 
-		/// \brief Allocate a new memory chunk.
-		void* allocateChunk() {
-			if (!free_node_) {
-				ObjectBlock* new_block = new ObjectBlock;
-				new_block->next_ = head_block_;
-				new_block->data_[0].next_ = nullptr;
-				for (int i = 1; i < chunk_size; ++i) {
-					ObjectNode* temp = &(new_block->data_[i - 1]);
-					(new_block->data_[i]).next_ = temp;
-				}
-				free_node_ = &(new_block->data_[chunk_size - 1]);
-				head_block_ = new_block;
-			}
-			ObjectNode* new_node = free_node_;
-			free_node_ = free_node_->next_;
-			return new_node->item_;
-		}
+  /// \brief Allocate a new memory chunk.
+  void* allocateChunk() {
+    if (!free_node_) {
+      ObjectBlock* new_block = new ObjectBlock;
+      new_block->next_ = head_block_;
+      new_block->data_[0].next_ = nullptr;
+      for (int i = 1; i < chunk_size; ++i) {
+        ObjectNode* temp = &(new_block->data_[i - 1]);
+        (new_block->data_[i]).next_ = temp;
+      }
+      free_node_ = &(new_block->data_[chunk_size - 1]);
+      head_block_ = new_block;
+    }
+    ObjectNode* new_node = free_node_;
+    free_node_ = free_node_->next_;
+    return new_node->item_;
+  }
 
-		/// \brief Push the free memory back to list.
-		///
-		/// \attention Released node which is inserted to the head of spare nodes.
-		void freeChunk(void* p) {
-			char* temp = static_cast<char*>(p);
-			{
-				temp -= sizeof(ObjectNode*);
-			}
-			ObjectNode* node = static_cast<ObjectNode*>(static_cast<void*>(temp));
-			node->next_ = free_node_; free_node_ = node;
-		}
+  /// \brief Push the free memory back to list.
+  ///
+  /// \attention Released node which is inserted to the head of spare nodes.
+  void freeChunk(void* p) {
+    char* temp = static_cast<char*>(p);
+    { temp -= sizeof(ObjectNode*); }
+    ObjectNode* node = static_cast<ObjectNode*>(static_cast<void*>(temp));
+    node->next_ = free_node_;
+    free_node_ = node;
+  }
 
-		/// \brief Pass a function, functor, lambda expression to it and apply to all objects in the pool.
-		template <typename F>
-		void mapAll(F& fn) const {
-			for (ObjectBlock* cursor = head_block_; cursor; cursor = cursor->next_) {
-				for (int i = 0; i < chunk_size; ++i) {
-					T* temp = static_cast<T*>(static_cast<void*>(cursor->data_[i].item_));
-					fn(*temp);
-				}
-			}
-		}
+  /// \brief Pass a function, functor, lambda expression to it and apply to all
+  /// objects in the pool.
+  template <typename F>
+  void mapAll(F& fn) const {
+    for (ObjectBlock* cursor = head_block_; cursor; cursor = cursor->next_) {
+      for (int i = 0; i < chunk_size; ++i) {
+        T* temp = static_cast<T*>(static_cast<void*>(cursor->data_[i].item_));
+        fn(*temp);
+      }
+    }
+  }
 
-	private:
-		class ObjectNode {
-			/// \brief The constructor.
-			ObjectNode()
-				:
-				next_(nullptr) {
-				std::memset(item_, 0, sizeof(T));
-			}
+ private:
+  class ObjectNode {
+    /// \brief The constructor.
+    ObjectNode() : next_(nullptr) { std::memset(item_, 0, sizeof(T)); }
 
-			friend class CObjectPool<T, chunk_size>;
+    friend class CObjectPool<T, chunk_size>;
 
-			ObjectNode* next_;
-			char item_[sizeof(T)];
-		};
+    ObjectNode* next_;
+    char item_[sizeof(T)];
+  };
 
-		class ObjectBlock {
-			/// \brief The constructor.
-			ObjectBlock()
-				:
-				next_(nullptr) {}
+  class ObjectBlock {
+    /// \brief The constructor.
+    ObjectBlock() : next_(nullptr) {}
 
-			friend class CObjectPool<T, chunk_size>;
+    friend class CObjectPool<T, chunk_size>;
 
-			ObjectBlock* next_;
-			ObjectNode data_[chunk_size];
-		};
+    ObjectBlock* next_;
+    ObjectNode data_[chunk_size];
+  };
 
-		///< \brief the first free node and the head block
-		ObjectNode* free_node_;
-		///< \brief there is a list linking each block
-		ObjectBlock* head_block_;
-	};
+  ///< \brief the first free node and the head block
+  ObjectNode* free_node_;
+  ///< \brief there is a list linking each block
+  ObjectBlock* head_block_;
+};
 
-#define COBJECTPOOL_VAR_DECLARE(name)	\
-public:	\
-	static CObjectPool<name> pool;
-#define COBJECTPOOL_FUNC_CREATE(name)	\
-public:	\
-	template <typename... Args>	\
-	static name* create(Args&& ... args) {	\
-		name* p = static_cast<name*>(pool.allocateChunk());	\
-		p->init(std::forward<Args>(args)...);	\
-		return p;	\
-	}	\
-private:
-#define COBJECTPOOL_FUNC_CLEAR(name)	\
-public:	\
-	void clear() {	\
-		name* p = static_cast<name*>(this);	\
-		p->destroy();	\
-		pool.freeChunk(this);	\
-	}	\
-private:
-#define COBJECTPOOL_HEAPONLY(name)	\
-private:	\
-	~name() {}
-#define COBJECTPOOL_INCLASS(name)	\
-	COBJECTPOOL_VAR_DECLARE(name)	\
-	COBJECTPOOL_FUNC_CREATE(name)	\
-	COBJECTPOOL_FUNC_CLEAR(name)	\
-	COBJECTPOOL_HEAPONLY(name)
+#define COBJECTPOOL_VAR_DECLARE(class_name) \
+ public:                                    \
+  static CObjectPool<class_name> pool;
 
-#define COBJECTPOOL_VAR_INIT(name)	\
-	CObjectPool<name> name::pool;
-#define COBJECTPOOL_EXCLASS(name)	\
-	COBJECTPOOL_VAR_INIT(name)
-}
+#define COBJECTPOOL_FUNC_CREATE(class_name)                         \
+ public:                                                            \
+  template <typename... Args>                                       \
+  static class_name* create(Args&&... args) {                       \
+    class_name* p = static_cast<class_name*>(pool.allocateChunk()); \
+    p->init(std::forward<Args>(args)...);                           \
+    return p;                                                       \
+  }                                                                 \
+                                                                    \
+ private:
 
-#endif	// DJA_COBJECTPOOL_H_
+#define COBJECTPOOL_FUNC_CLEAR(class_name)          \
+ public:                                            \
+  void clear() {                                    \
+    class_name* p = static_cast<class_name*>(this); \
+    p->destroy();                                   \
+    pool.freeChunk(this);                           \
+  }                                                 \
+                                                    \
+ private:
+
+#define COBJECTPOOL_HEAPONLY(class_name) \
+ private:                                \
+  ~class_name() {}
+
+#define COBJECTPOOL_INCLASS(class_name) \
+  COBJECTPOOL_VAR_DECLARE(class_name)   \
+  COBJECTPOOL_FUNC_CREATE(class_name)   \
+  COBJECTPOOL_FUNC_CLEAR(class_name)    \
+  COBJECTPOOL_HEAPONLY(class_name)
+
+#define COBJECTPOOL_EXCLASS(class_name) \
+  CObjectPool<class_name> class_name::pool;
+
+}  // namespace dja
+
+#endif
