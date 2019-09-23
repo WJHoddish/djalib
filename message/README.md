@@ -1,0 +1,1 @@
+message box and string implementation in cpp, using object pool & gc to preserve memory
