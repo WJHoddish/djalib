@@ -20,4 +20,4 @@ target_link_libraries( ${your_project_name} djalib )
 - support Doxygen
 
 ## FAQs
-If you meet any suspected bug, please contact me through <wjhgeneral@outlook.com>.
+If you met any suspected bug, please contact me through <wjhgeneral@outlook.com>.
