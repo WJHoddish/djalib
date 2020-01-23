@@ -3,7 +3,7 @@
 // Copyright (C) summer 2019 Jiaheng Wang
 // License(BSD)
 // Author: Jiaheng Wang <wjhgeneral@outlook.com>
-// Reflection in cpp.
+// The reflection register.
 //
 
 #ifndef DJA_REFLECTION_REGISTER_H_
@@ -11,6 +11,7 @@
 
 #include <map>
 #include <string>
+#include <typeinfo>
 
 namespace dja
 {

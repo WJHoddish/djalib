@@ -35,6 +35,8 @@ class Ioc : public NonCopyable {
   /// container can help you create an object of the interface type (what gives
   /// you is a std smart pointer). Otherwise, your interface type should have a
   /// constructor that only receives a specific type pointer.
+  ///
+  /// \attention The full name of SFINAE is: Substitution Failure Is Not An Error.
   template <class T, class Depend, typename... Args>
   auto typeRegister(const std::string& key) ->
       typename std::enable_if<!std::is_base_of<T, Depend>::value>::type {

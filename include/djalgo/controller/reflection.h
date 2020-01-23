@@ -9,9 +9,7 @@
 #ifndef DJA_REFLECTION_H_
 #define DJA_REFLECTION_H_
 
-#include <typeinfo>
-
-#include "reflection_register.h"
+#include "reflection_helper.h"
 
 namespace dja
 {

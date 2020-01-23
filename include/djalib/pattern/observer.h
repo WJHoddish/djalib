@@ -39,12 +39,12 @@ namespace dja {
 	public:
 		/// \brief Add function.
 		int connect(const Func& f) {
-			return Assgin(f);
+			return assgin(f);
 		}
 
 		/// \brief Add function with right value.
 		int connect(Func&& f) {
-			return Assgin(f);
+			return assgin(f);
 		}
 
 		void disconnect(int key) {
